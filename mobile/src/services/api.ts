@@ -1,6 +1,4 @@
-// mobile/src/services/api.ts
-const LOCAL_IP = "192.168.1.7" ; 
-const BASE_URL = `http://${LOCAL_IP}:8080/api/v1`;
+const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
 
 export const apiCall = async (endpoint: string, method: string = "GET", body?: any, token?: string) => {
   const headers: HeadersInit = {
@@ -9,6 +7,11 @@ export const apiCall = async (endpoint: string, method: string = "GET", body?: a
 
   if (token) {
     headers["Authorization"] = `Bearer ${token}`;
+  }
+
+  // Ensure BASE_URL exists just in case the .env fails to load
+  if (!BASE_URL) {
+    throw new Error("API URL is not defined in environment variables");
   }
 
   const response = await fetch(`${BASE_URL}${endpoint}`, {
